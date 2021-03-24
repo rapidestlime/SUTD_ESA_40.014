@@ -1,10 +1,38 @@
 
+get_question_and_answer <- function(q) {
+  #open the connection
+  conn <- getAWSConnection()
+  
+  
+  # choose random index from vector q
+  a <-sample(1:length(q), 1)
+  questionNo <- q[a]
+  
+  query <- paste0("SELECT * FROM QuestionPool WHERE QuestionNo = ", questionNo)
+  result <- dbGetQuery(conn,query)
+  # result should be a dataframe with a single row and a column named 'playername'
+  question <- c(1:3)
+  question[1] <- result$QuestionNo
+  question[2] <- result$Question[1]
+  question[3] <- result$QuestionAns[1]
+  
+  # remove the element from q
+  dbDisconnect(conn)
+  question
+  
+}
+
+
+
+
 ########server########
 server <- function(input, output, session) {
   #Set game parameters
-  question_store <- c(1:10)
+  
+  
   # reactiveValues objects for storing items like the user password
-  vals <- reactiveValues(password = NULL,playerid=NULL,playername=NULL)
+  vals <- reactiveValues(password = NULL,playerid=NULL,playername=NULL, 
+                         question_store = c(1:10))
   GRIDSIZE <- 3
   pieces <- matrix(rep(0,GRIDSIZE*GRIDSIZE),nrow=GRIDSIZE,ncol=GRIDSIZE,byrow=TRUE)
   gamevals <- reactiveValues(turncount=0,pieces=pieces)
