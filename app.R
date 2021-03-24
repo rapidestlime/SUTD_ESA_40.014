@@ -161,7 +161,7 @@ server <- function(input, output, session) {
   #Set game parameters
   MAXTURNS <- 15 # Keep it short for debugging
   # reactiveValues objects for storing items like the user password
-  vals <- reactiveValues(password = NULL,playerid=NULL,playername=NULL,gamevariantid=1,playercolor=1,turnstate=NULL)
+  vals <- reactiveValues(password = NULL,playerid=NULL,playername=NULL,question_store = c(1:10),gamevariantid=1,playercolor=1,turnstate=NULL)
   GRIDSIZE <- 4
   pieces <- matrix(rep(0,GRIDSIZE*GRIDSIZE),nrow=GRIDSIZE,ncol=GRIDSIZE,byrow=TRUE)
   gamevals <- reactiveValues(turncount=0,pieces=pieces)
