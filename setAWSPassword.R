@@ -1,4 +1,4 @@
 pwd <- rstudioapi::askForPassword("AWS database password")
-options(AWSPassword=pwd)
+options(AWSPassword='9yTFEWsr')
 rm(pwd)
 
