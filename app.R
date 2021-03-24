@@ -383,6 +383,34 @@ server <- function(input, output, session) {
   )
 }
 
+#Generate, or re-generate, HTML to create modal dialog for popup question modal
+popupModal <- function() {
+  modalDialog(
+    title = "Popup Question",
+    
+    
+    actionButton("questionminuspoints","Yes"), #function to minus points bc Yes is wrong answer
+    actionButton("questionpluspoints","No"), #function to plus points bc No is right answer
+    
+    footer = tagList(
+      modalButton("Cancel"),
+      actionButton("popupok", "OK")
+    )
+  )
+}
+
+ui <- fluidPage(
+  actionButton("popupok", "Popup")
+)
+
+server <- function(input, output, session){
+  #Fire some code if the user clicks the Popup button
+  observeEvent(input$popupok, {
+    showModal(popupModal())
+  })
+}
+
+
 shinyApp(ui, server)
 
 
