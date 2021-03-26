@@ -24,29 +24,27 @@ getAWSConnection <- function(){
 }
 
 # retrieve question from database
-get_question_and_answer <- function(store) {
+get_question_and_answer <- function(q) {
+  # q is a vector
   #open the connection
   conn <- getAWSConnection()
   
+  
   # choose random index from vector q
-  questionNo <- sample(store, 1)
+  a <-sample(1:length(q), 1)
+  questionNo <- q[a]
   
-  query <- paste0("SELECT * FROM QuestionPool WHERE QuestionNo = ", toString(questionNo))
+  query <- paste0("SELECT * FROM QuestionPool WHERE QuestionNo = ", questionNo)
   result <- dbGetQuery(conn,query)
-  
   # result should be a dataframe with a single row and a column named 'playername'
-  question <- c()
-  question[1] <- result$QuestionNo
-  question[2] <- result$Question
-  question[3] <- result$QuestionAns
-  
-  # update question_pool in vals to remove used question
-  vals$question_pool <- vals$question_pool[x != questionNo]
+  question <- c(1:3)
+  question[1] <- result$QuestionNo[1]
+  question[2] <- result$Question[1]
+  question[3] <- result$QuestionAns[1]
   
   # remove the element from q
   dbDisconnect(conn)
   question
   
 }
-
 
