@@ -1,12 +1,12 @@
 # At the beginning of any R session, record your AWS database password:
-source("setAWSPassword.R")
+#source("setAWSPassword.R")
 
 # Now, anywhere in your code where the password is needed you can get it using
 getOption("AWSPassword")
 # Otherwise it is hidden. So now this code can be shared with anyone 
 # without giving them access to your personal AWS database.
 
-source("usePackages.R")
+#source("usePackages.R")
 pkgnames <- c("tidyverse","shiny","DBI","jsonlite","shinydashboard","shinyWidgets")
 loadPkgs(pkgnames)
 
@@ -37,7 +37,7 @@ ui <- dashboardPage(
   dashboardBody(
     tabItems(
       # First tab content
-      tabItem(tabName = "welcome",
+      tabItem(tabName = "Welcome",
               tags$div(
                 tags$img(
                   src='game background image.png',
@@ -63,38 +63,41 @@ ui <- dashboardPage(
                   tags$br(),
                   tags$h2(
                     'WELCOME!',
-                    style='color: #D6AC18;
+                    style='color: #FFFFFF;
                            font-family: Times New Roman;
                            align: center;'
                     ),
                   tags$br(),
                   tags$h3(
                     'About Game',
-                    style='color: #D6AC18;
+                    style='color: #FFFFFF;
                            font-family: Times New Roman;
                            align: center;'
                     ),
                   tags$p(
-                    "Under construction currently",
-                    style='color:#D6AC18;
+                    "The game is designed to raise awareness about best practices in hawker centres, and make them 
+                    a better place for everyone!",
+                    style='color:#FFFFFF;
                            font-family:Times New Roman;
                            align:center;'
                     ),
                   tags$h3(
                     "Instructions",
-                    style='color:#D6AC18;
+                    style='color:#FFFFFF;
                           font-family:Times New Roman;
                           align:center;'
                     ),
-                  tags$p("There are no rules for this game yet. 
+                  tags$p("You are given 60 sec to try to click as many", tags$b("dirty plates"), "as possible. Every dirty plate
+on the grid will disappear in", tags$b("2 seconds."), ".A special", tags$b("trivia icon"), "will also pop up randomly, and you need to answer the question to earn points.
+Not clicking dirty plates, or answering the question incorrectly will cause you to lose points. You need to earn as many points as you can.
                          We are simply demonstrating the elements of a two-player game.",
-                         style='color:#D6AC18;
+                         style='color:#FFFFFF;
                                font-family:Times New Roman;
                                align:center;'
                          ),
                   tags$h3(
                     "Team Members",
-                    style='color:#D6AC18;
+                    style='color:#FFFFFF;
                            font-family:Times New Roman;
                            align:center;'
                     ),
@@ -208,7 +211,7 @@ server <- function(input, output, session) {
   # React to successful login
   output$loggedInAs <- renderUI({
     if (is.null(vals$playername))
-      p("Not logged in yet.",style='color:#D6AC18;font-family:Times New Roman;;align:center;')
+      p("Not logged in yet.",style='color:#FFFFFF;font-family:Times New Roman;;align:center;')
     else
       vals$playername
   })
@@ -225,30 +228,12 @@ server <- function(input, output, session) {
     req(vals$playerid) # if not logged in, the controls will not be visible
     tagList(
       actionButton("startgame", "Start a New Game"),
-      htmlOutput("stateofturn"),
       # uiOutput("turnbutton"),
       
       
     )
   })
   
-  output$stateofturn <- renderUI({
-    req(vals$playerid)
-    invalidateLater(5000,session) # trigger a timing event in milliseconds
-    # Read back the information from the database
-    allstate <- getGameTurnAndState(vals$playerid,vals$gamevariantid)
-    vals$turnstate <- allstate$turnstate
-    gamevals$turncount <- allstate$gamestate$turncount
-    gamevals$pieces <-  allstate$gamestate$pieces
-    text <- "The game has not started."
-    if(!is.null(vals$turnstate)){
-      if (vals$turnstate==0) text <- "Game is OVER." else {
-        
-        if (vals$turnstate==1) text <- "It is RED's turn to play." else text <- "It is BLUE's turn to play."
-      }
-    }  
-    text  
-  })
   
   # Something of a trick here: explained in the reference "change color actionButton Shiny R"
   #  output$turnbutton <- renderUI({
@@ -262,9 +247,9 @@ server <- function(input, output, session) {
   observeEvent(input$startgame,{
     gamevals$turncount <- 0
     gamevals$pieces <- matrix(rep(0,GRIDSIZE*GRIDSIZE),nrow=GRIDSIZE,ncol=GRIDSIZE,byrow=TRUE)
-    initialstate <- list(turncount=gamevals$turncount,pieces=gamevals$pieces)
-    vals$turnstate <- vals$playercolor  # Assume the current playercolor has the first turn
-    startNewGame(vals$playerid,vals$gamevariantid,vals$turnstate,initialstate)
+    #initialstate <- list(turncount=gamevals$turncount,pieces=gamevals$pieces)
+    #vals$turnstate <- vals$playercolor  # Assume the current playercolor has the first turn
+    startNewGame(vals$playerid,vals$gamevariantid)
   })
   
   #  observeEvent(input$taketurn,{

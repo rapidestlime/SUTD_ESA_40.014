@@ -1,12 +1,12 @@
 # At the beginning of any R session, record your AWS database password:
-source("setAWSPassword.R")
+#source("setAWSPassword.R")
 
 # Now, anywhere in your code where the password is needed you can get it using
 #getOption("AWSPassword")
 # Otherwise it is hidden. So now this code can be shared with anyone 
 # without giving them access to your personal AWS database.
 
-source("usePackages.R")
+#source("usePackages.R")
 pkgnames <- c("tidyverse","shiny","DBI","jsonlite","shinydashboard")
 loadPkgs(pkgnames)
 
@@ -122,4 +122,30 @@ registerPlayer <- function(password){
   #Close the connection
   dbDisconnect(conn)
   playername
+}
+
+startNewGame <- function(playerid,gamevariantid,playercolor){
+  # gamestate is a list of some sort so we convert it to a JSON string
+  #open the connection
+  conn <- getAWSConnection()
+  #We could encounter an error or warning when we interact with the AWS database so enclose with a TryCatch()
+  tryCatch({
+    # A gamestate record may or may not exist for this player and gamevariant.
+    # An UPDATE query will fail if no matching record exists.
+    # An INSERT query may fail (because of duplicates) if a matching record exists.
+    # So the safest action to DELETE all matching records and then INSERT a new one.
+    query <-  paste0("DELETE FROM LeaderGameState WHERE playerid=",playerid," AND gamevariantid=",gamevariantid)
+    result <- dbExecute(conn,query)
+    # Now we can insert a new record for this game.
+    query <- paste0("INSERT INTO LeaderGameState (playerid,gamevariantid) VALUES (")
+    query <- paste0(query,playerid,",",gamevariantid,")")
+    #print(query)
+    result <- dbExecute(conn,query)
+  },
+  error=function(cond){print(paste0("startNewGame ERROR: ",cond))},
+  warning=function(cond){print(paste0("startNewGame WARNING: ",cond))},
+  finally={}
+  )
+  #Close the connection
+  dbDisconnect(conn)
 }
