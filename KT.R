@@ -1,5 +1,6 @@
 
 get_question_and_answer <- function(q) {
+  # q is a vector
   #open the connection
   conn <- getAWSConnection()
   
@@ -12,7 +13,7 @@ get_question_and_answer <- function(q) {
   result <- dbGetQuery(conn,query)
   # result should be a dataframe with a single row and a column named 'playername'
   question <- c(1:3)
-  question[1] <- result$QuestionNo
+  question[1] <- result$QuestionNo[1]
   question[2] <- result$Question[1]
   question[3] <- result$QuestionAns[1]
   
