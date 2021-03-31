@@ -1,6 +1,6 @@
 
 
-
+library(lubridate)
 library(shiny)
 
 
@@ -69,7 +69,11 @@ server <- function(input, output, session) {
           
           showModal(modalDialog(
             title = "Important message",
-            "Game is Over!"
+            "Game is Over!",
+            br(),
+            tags$h3("Cleaning up after yourself is everybody's responsibility!"),
+            "Here are the questions you got wrong:"
+            #retrieve_question_ans(vals$wrong_question)
           ))
         }
       }
