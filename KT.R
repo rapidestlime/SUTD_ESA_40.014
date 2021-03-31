@@ -28,7 +28,9 @@ ui <- fluidPage(
 server <- function(input, output, session){
   #Fire some code if the user clicks the Popup button
   # change to observeEvent(input$click11,{})
-
+  vals <- reactiveValues(password = NULL,playerid=NULL,playername=NULL,question_store = c(1:10),gamevariantid=1,playercolor=1,turnstate=NULL,
+                         score = 0, wrong_question = c())
+  
   query <- get_question_and_answer(vals$question_store) # this returns a list
   
   
@@ -54,7 +56,12 @@ server <- function(input, output, session){
       vals$score <- vals$score + 10
       # link this to point system
     } else {
+      
+    
       vals$score <- vals$score - 10
+      
+      # answered wrongly
+      vals$wrong_question <- c(vals$wrong_question, question_No)
     }
     removeModal()
   })
