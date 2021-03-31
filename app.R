@@ -384,29 +384,31 @@ server <- function(input, output, session) {
 }
 
 #Generate, or re-generate, HTML to create modal dialog for popup question modal
-popupModal <- function() {
+popupModal <- function(question) {
   modalDialog(
     title = "Popup Question",
-    
-    
+    h2(question), #function for query, placeholder
+    br(),
+    br(),
     actionButton("questionminuspoints","Yes"), #function to minus points bc Yes is wrong answer
     actionButton("questionpluspoints","No"), #function to plus points bc No is right answer
     
     footer = tagList(
-      modalButton("Cancel"),
-      actionButton("popupok", "OK")
+      #modalButton("Cancel"), #later we can remove, cos users dont use
+      #actionButton("popupok", "OK")
     )
   )
 }
 
 ui <- fluidPage(
-  actionButton("popupok", "Popup")
+  actionButton("popupok", "Popup") #we will change to bomb later to call
 )
 
 server <- function(input, output, session){
   #Fire some code if the user clicks the Popup button
   observeEvent(input$popupok, {
-    showModal(popupModal())
+    showModal(popupModal("question")) #replace with query
+    
   })
 }
 
