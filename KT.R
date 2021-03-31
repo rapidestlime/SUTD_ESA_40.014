@@ -49,7 +49,12 @@ server <- function(input, output, session){
     ans = input$select_option
     if (toString(ans) == query[3]) {
       print("add points")
+      
+      #
+      vals$score <- vals$score + 10
       # link this to point system
+    } else {
+      vals$score <- vals$score - 10
     }
     removeModal()
   })
