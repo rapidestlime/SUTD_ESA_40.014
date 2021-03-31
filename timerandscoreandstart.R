@@ -2,7 +2,59 @@
 
 library(lubridate)
 library(shiny)
+library(shinyBS)
+source("usePackages.R")
+pkgnames <- c("tidyverse","shiny","DBI","jsonlite","shinydashboard")
+loadPkgs(pkgnames)
 
+#source("setAWSPassword.R")
+
+# Now, anywhere in your code where the password is needed you can get it using
+#getOption("AWSPassword")
+
+source("usePackages.R")
+pkgnames <- c("tidyverse","shiny","DBI","jsonlite","shinydashboard")
+loadPkgs(pkgnames)
+
+
+
+# get connection to aws database
+getAWSConnection <- function(){
+  conn <- dbConnect(
+    drv = RMySQL::MySQL(),
+    dbname = "student063",
+    host = "esddbinstance-1.ceo4ehzjeeg0.ap-southeast-1.rds.amazonaws.com",
+    username = "student063",
+    password = getOption("AWSPassword"))
+  conn
+}
+
+# end-game, display the wrong questions
+# return a 'table', input is vector of the wrong question, ie [1,4,6]
+retrieve_question_and_answer <- function(j) {
+  # q is a vector
+  #open the connection
+  conn <- getAWSConnection()
+  
+  df <- NULL
+  
+  for (i in 1:length(j)) {
+    query <- paste0("SELECT * FROM QuestionPool WHERE QuestionNo = ", j[i])
+    result <- dbGetQuery(conn,query)
+    # result should be a dataframe with a single row and a column named 'playername'
+    store <- as.data.frame(result)
+    #question[1] <- result$QuestionNo[1]
+    #question[2] <- result$Question[1]
+    #question[3] <- result$QuestionAns[1]
+    df <- rbind(df,store)
+  }
+  
+  dbDisconnect(conn)
+  df
+}
+
+#test
+retrieve_question_and_answer(c(6,9,3))
 
 ui <- fluidPage(
   actionButton("playgame", "Play the Game"),
@@ -72,8 +124,8 @@ server <- function(input, output, session) {
             "Game is Over!",
             br(),
             tags$h3("Cleaning up after yourself is everybody's responsibility!"),
-            "Here are the questions you got wrong:"
-            #retrieve_question_ans(vals$wrong_question)
+            "Here are the questions you got wrong:",
+            renderDataTable({retrieve_question_and_answer(c(1,3,4))})
           ))
         }
       }
