@@ -1,8 +1,8 @@
 # At the beginning of any R session, record your AWS database password:
-source("setAWSPassword.R")
+#source("setAWSPassword.R")
 
 # Now, anywhere in your code where the password is needed you can get it using
-getOption("AWSPassword")
+#getOption("AWSPassword")
 # Otherwise it is hidden. So now this code can be shared with anyone 
 # without giving them access to your personal AWS database.
 
@@ -13,7 +13,7 @@ loadPkgs(pkgnames)
 source('login_registration.R')
 source('question.R')
 
-scoredict = hash(a=10, b=10, c=10)
+
 
 
 
@@ -92,10 +92,8 @@ ui <- dashboardPage(
                           font-family:Times New Roman;
                           align:center;'
                   ),
-                  tags$p("You are given 60 sec to try to click as many", tags$b("dirty plates"), "as possible. Every dirty plate
-on the grid will disappear in", tags$b("2 seconds."), ".A special", tags$b("trivia icon"), "will also pop up randomly, and you need to answer the question to earn points.
-Not clicking dirty plates, or answering the question incorrectly will cause you to lose points. You need to earn as many points as you can.
-                         We are simply demonstrating the elements of a two-player game.",
+                  tags$p("You are given 60 sec to try to click as many", tags$b("dirty plates"), "as possible. ", "A special", tags$b("trivia icon"), "will also pop up randomly, and you need to answer the question to earn points.
+Answering the question incorrectly will incurs a penalty of 20 points. You need to earn as many points as you can.",
                          style='color:#FFFFFF;
                                font-family:Times New Roman;
                                align:center;'
@@ -106,10 +104,14 @@ Not clicking dirty plates, or answering the question incorrectly will cause you 
                            font-family:Times New Roman;
                            align:center;'
                   ),
+                  tags$ul(
+                    p('JARYL LIM YUHENG'),
+                    p('NICHOLAS TAN YI DA')
+                  ),
                   actionButton("register", "Register"),
                   actionButton("login", "Login"),
                   tags$h4("Logged in as:"),
-                  htmlOutput("loggedInAs")
+                  htmlOutput("loggedInAs", style="font-size:30;color:#D6AC18;font-family:Times New Roman;align:center;")
                 )
               )
       ),
@@ -152,12 +154,16 @@ Not clicking dirty plates, or answering the question incorrectly will cause you 
 server <- function(input, output, session) {
   #reactiveValues objects for storing items like the user password
   vals <- reactiveValues(password = NULL,playerid=NULL,playername=NULL,question_store = c(1:10),wrong_qns=c(),score=0,grid=list(0,0,0,0,0,0,0,0,0),query=NULL)
-  timer <- reactiveVal(60)
+  timer <- reactiveVal(10)
   active <- reactiveVal(FALSE)
+  
+  
+  ####################registration/login#####################
   
   #Fire some code if the user clicks the Register button
   observeEvent(input$register, {
     showModal(passwordModal(failed=FALSE))
+    
   })
   # Fire some code if the user clicks the passwordok button
   observeEvent(input$passwordok, {
@@ -176,10 +182,12 @@ server <- function(input, output, session) {
       showModal(passwordModal(failed = TRUE))
     }
   })
+  
   #Fire some code if the user clicks the Login button
   observeEvent(input$login, {
     showModal(loginModal(failed=FALSE))
   })
+  
   # Fire some code if the user clicks the loginok button
   observeEvent(input$loginok, {
     # Get the playerID and check if it is valid
@@ -199,10 +207,12 @@ server <- function(input, output, session) {
   # React to successful login
   output$loggedInAs <- renderUI({
     if (is.null(vals$playername))
-      p("Not logged in yet.",style='color:#D6AC18;font-family:Times New Roman;;align:center;')
+      p("Not logged in yet.",style='font-size:30;color:#D6AC18;font-family:Times New Roman;;align:center;')
     else
-      vals$playername
+      p(vals$playername,style='font-size:30;color:#D6AC18;font-family:Times New Roman;;align:center;')
   })
+  ####################################################
+  
   
   #######image renderer#########
   renderCell <- function(imgtype){
@@ -237,7 +247,7 @@ server <- function(input, output, session) {
   #############################################
   
   
-  #######activate game#########
+  ############activate game##############
   observeEvent(input$start,{active(TRUE)})
   ########################################
   
@@ -256,9 +266,11 @@ server <- function(input, output, session) {
         if(timer()<1)
         {
           active(FALSE)
-          timer(60)
+          timer(10)
           temp_score <- vals$score
           vals$score <- 0
+          vals$grid <- list(0,0,0,0,0,0,0,0,0)
+          vals$question_store <- c(1:10)
           
           output$cell11 <- renderCell('blanksmall.png')  
           output$cell12 <- renderCell('blanksmall.png') 
@@ -276,13 +288,19 @@ server <- function(input, output, session) {
           output$cell42 <- renderCell('blanksmall.png') 
           output$cell43 <- renderCell('blanksmall.png')  
           output$cell44 <- renderCell('blanksmall.png')
-          vals$grid <- list(0,0,0,0,0,0,0,0,0)
+          
           showModal(modalDialog(
-            title = "Important message",
-            "GAME OVER!",
+            title = "GAME OVER",
+            tags$h1(paste("FINAL SCORE: ", temp_score),style="text-align:center;"),
+            tags$h1("Cleaning up after yourself is everybody's responsibility!",style="text-align:center;"),
+            tags$h2("Think its tiring to click those dirty plates?",style="text-align:center;"),
+            tags$h2("Cleaning Aunties have a tougher time than YOU!!!",style="text-align:center;color:red;"),
+            HTML('<img src="https://www.memesmonkey.com/images/memesmonkey/b7/b7f445890fad3baa8cb18fe2871525ba.jpeg" style="display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;" >'),
             br(),
-            tags$h3("Cleaning up after yourself is everybody's responsibility!"),
-            "Here are the questions you got wrong:",
+            tags$h3("Here are the questions you got wrong:"),
             if (length((vals$wrong_qns))>0){
             renderDataTable({retrieve_question_and_answer(vals$wrong_qns)})}
 
@@ -294,19 +312,21 @@ server <- function(input, output, session) {
   #########################################
   
   
+  ##########show score###########
   output$score <- renderText({
     paste("Score: ", vals$score)
   })
+  ###############################
   
   
   ###############function to output plates icons on unoccupied spaces#############
   observe({
-    invalidateLater(800, session)
+    invalidateLater(700, session)
     isolate({
       if(active()){
         #add the name of file to a reactive value to access inside/outside of this observe event
         img <- "dishimage.png"
-        if (length(which(vals$grid==0)) != 0){
+        if (length(which(vals$grid==0)) > 0){
           cell <- sample(which(vals$grid==0),1)
           print(vals$grid)
           
@@ -365,7 +385,7 @@ server <- function(input, output, session) {
   ######function to add trivia question######
   observeEvent(timer(),{
     isolate({
-    if (timer() == 50){
+    if (timer() %in% c(45,30,15)){
     cell <- sample(which(vals$grid==0),1) 
     if (cell == 1){
       vals$grid[cell] <- "b"
@@ -420,7 +440,7 @@ server <- function(input, output, session) {
   
   ##############change question cell to state c###############
   observe({
-    invalidateLater(1500)
+    invalidateLater(1700)
     isolate({
       if (length(which(vals$grid=="b")) != 0){
         cell <- which(vals$grid=="b")
@@ -451,16 +471,16 @@ server <- function(input, output, session) {
         if (cell == 9){
           vals$grid[cell] <- "c"
         }
-       else{}}
+       else{}
+        }
         })
-    
   })
 #############################################  
 
   
 ############remove unanswered qns if any and penalty#################
   observe({
-    invalidateLater(2000)
+    invalidateLater(2200)
     isolate({
       if (length(which(vals$grid=="c")) != 0){
       cell <- which(vals$grid=="c")
@@ -655,6 +675,7 @@ server <- function(input, output, session) {
   observeEvent(input$click32,{processClickEvent(8)})
   observeEvent(input$click33,{processClickEvent(9)})
   ######################################################
+  
   }
   
 

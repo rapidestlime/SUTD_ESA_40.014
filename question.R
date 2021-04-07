@@ -1,5 +1,5 @@
 # At the beginning of any R session, record your AWS database password:
-source("setAWSPassword.R")
+#source("setAWSPassword.R")
 
 # Now, anywhere in your code where the password is needed you can get it using
 #getOption("AWSPassword")
@@ -19,7 +19,7 @@ getAWSConnection <- function(){
     dbname = "student063",
     host = "esddbinstance-1.ceo4ehzjeeg0.ap-southeast-1.rds.amazonaws.com",
     username = "student063",
-    password = getOption("AWSPassword"))
+    password = '9yTFEWsr')
   conn
 }
 
@@ -73,18 +73,11 @@ retrieve_question_and_answer <- function(j) {
 
 popupModal <- function(question) {
   modalDialog(
-    title = "Popup Question",
+    title = "TRIVIA TIME!",
     h2(question), #function for query, placeholder
     br(),
     br(),
     selectInput("select_option","Are you sure?", c("Yes", "No")),
-    # actionButton("questionminuspoints","Yes"), #function to minus points bc Yes is wrong answer
-    # actionButton("questionpluspoints","No"), #function to plus points bc No is right answer
-    actionButton("confirm", "Confirm"),
-    
-    footer = tagList(
-      #modalButton("Cancel"), #later we can remove, cos users dont use
-      #actionButton("popupok", "OK")
-    )
+    actionButton("confirm", "Confirm")
   )
 }

@@ -1,5 +1,5 @@
 # At the beginning of any R session, record your AWS database password:
-source("setAWSPassword.R")
+#source("setAWSPassword.R")
 
 # Now, anywhere in your code where the password is needed you can get it using
 #getOption("AWSPassword")
@@ -49,7 +49,7 @@ getAWSConnection <- function(){
     dbname = "student063",
     host = "esddbinstance-1.ceo4ehzjeeg0.ap-southeast-1.rds.amazonaws.com",
     username = "student063",
-    password = getOption("AWSPassword"))
+    password = '9yTFEWsr')
   conn
 }
 
