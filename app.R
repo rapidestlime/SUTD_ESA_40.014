@@ -154,7 +154,7 @@ Answering the question incorrectly will incurs a penalty of 20 points. You need 
 server <- function(input, output, session) {
   #reactiveValues objects for storing items like the user password
   vals <- reactiveValues(password = NULL,playerid=NULL,playername=NULL,question_store = c(1:10),wrong_qns=c(),score=0,grid=list(0,0,0,0,0,0,0,0,0),query=NULL)
-  timer <- reactiveVal(10)
+  timer <- reactiveVal(35)
   active <- reactiveVal(FALSE)
   
   
@@ -271,6 +271,8 @@ server <- function(input, output, session) {
           vals$score <- 0
           vals$grid <- list(0,0,0,0,0,0,0,0,0)
           vals$question_store <- c(1:10)
+          temp_wrong <- vals$wrong_qns
+          vals$wrong_qns<- c()
           
           output$cell11 <- renderCell('blanksmall.png')  
           output$cell12 <- renderCell('blanksmall.png') 
@@ -301,8 +303,8 @@ server <- function(input, output, session) {
   width: 100%;" >'),
             br(),
             tags$h3("Here are the questions you got wrong:"),
-            if (length((vals$wrong_qns))>0){
-            renderDataTable({retrieve_question_and_answer(vals$wrong_qns)})}
+            if (length((temp_wrong))>0){
+            renderTable({retrieve_question_and_answer(temp_wrong)})}
 
           ))
         }
