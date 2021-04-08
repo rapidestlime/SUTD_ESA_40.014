@@ -144,6 +144,13 @@ Answering the question incorrectly will incurs a penalty of 20 points. You need 
                   textOutput('score')
                 )
               )
+      ),
+      tabItem(tabName = "scores",
+              h2("See where you stand"),
+              fluidRow(box(title = 'ScoreBoard', width = 12,
+                           uiOutput("moretabcontrols")))
+              
+              
       )
 
   )
@@ -266,8 +273,9 @@ server <- function(input, output, session) {
         if(timer()<1)
         {
           active(FALSE)
-          timer(10)
+          timer(35)
           temp_score <- vals$score
+          publishScore(vals$playername,vals$score)
           vals$score <- 0
           vals$grid <- list(0,0,0,0,0,0,0,0,0)
           vals$question_store <- c(1:10)
@@ -677,6 +685,23 @@ server <- function(input, output, session) {
   observeEvent(input$click32,{processClickEvent(8)})
   observeEvent(input$click33,{processClickEvent(9)})
   ######################################################
+  
+  ###### publish score ####
+  
+  output$moretabcontrols <- renderUI({
+    req(vals$score,vals$playername) # if vals$score is NULL, the controls will not be visible
+    tagList(
+      tableOutput("leaderboard")
+    )
+  })
+  #observeEvent(input$publishscore,{
+  #  publishScore(vals$playername,vals$score)
+  #})
+  
+  output$leaderboard <- renderTable({numclicks <- input$publishscore +input$playgame #to force a refresh whenever one of these buttons is clicked
+  leaderboard <- getLeaderBoard(1)
+  leaderboard}
+  )
   
   }
   
