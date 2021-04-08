@@ -123,3 +123,33 @@ registerPlayer <- function(password){
   dbDisconnect(conn)
   playername
 }
+
+publishScore <- function(playername,score){
+  conn <- getAWSConnection()
+  querytemplate <- "INSERT INTO LeaderBoardScore (playername,playerscore) VALUES (?id1,?id2)"
+  query <- sqlInterpolate(conn, querytemplate,id1=playername,id2=score)
+  #print(query) #for debug
+  success <- FALSE
+  tryCatch(
+    {  # This is not a SELECT query so we use dbExecute
+      result <- dbExecute(conn,query)
+      print("Score published")
+      success <- TRUE
+    }, error=function(cond){print("publishScore: ERROR")
+      print(cond)
+    }, 
+    warning=function(cond){print("publishScore: WARNING")
+      print(cond)},
+    finally = {}
+  )
+  dbDisconnect(conn)
+}
+
+getLeaderBoard <- function(gamevariantid){
+  conn <- getAWSConnection()
+  #First, we need to know whether highscorewins for this game variant
+  query <- paste0("SELECT playername, playerscore FROM LeaderBoardScore ORDER BY playerscore")
+  result <- dbGetQuery(conn,query)
+  dbDisconnect(conn)
+  result
+}
