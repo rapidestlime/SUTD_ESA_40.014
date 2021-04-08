@@ -105,7 +105,7 @@ Answering the question incorrectly will incurs a penalty of 20 points. You need 
                            align:center;'
                   ),
                   tags$ul(
-                    p('JARYL LIM YUHENG'),
+                    p('JARYL LIM YU HERNG'),
                     p('NICHOLAS TAN YI DA')
                   ),
                   actionButton("register", "Register"),
@@ -122,7 +122,7 @@ Answering the question incorrectly will incurs a penalty of 20 points. You need 
               fluidRow(
                 #useShinyjs(),
                 box(
-                  title = "Start Cleaning!!!",width=12,
+                  title = "Start Cleaning!!! Click as many dirty plates as you can!",width=12,
                   # the trick here is to make the gameboard image 'position:absolute;z-order:0'; 
                   # Then, to superimpose images, style them to be 'position:relative;z-order:999'
                   img(src='game background image.png',style="position:absolute;z-order:0",width="315px",height="300px"),
@@ -146,7 +146,7 @@ Answering the question incorrectly will incurs a penalty of 20 points. You need 
               )
       ),
       tabItem(tabName = "scores",
-              h2("See where you stand"),
+              h2("See where you stand!"),
               fluidRow(box(title = 'ScoreBoard', width = 12,
                            uiOutput("moretabcontrols")))
               
@@ -331,7 +331,7 @@ server <- function(input, output, session) {
   
   ###############function to output plates icons on unoccupied spaces#############
   observe({
-    invalidateLater(700, session)
+    invalidateLater(1200, session)
     isolate({
       if(active()){
         #add the name of file to a reactive value to access inside/outside of this observe event
