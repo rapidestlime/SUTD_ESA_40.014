@@ -450,7 +450,7 @@ server <- function(input, output, session) {
   
   ##############change question cell to state c###############
   observe({
-    invalidateLater(1700)
+    invalidateLater(1000)
     isolate({
       if (length(which(vals$grid=="b")) != 0){
         cell <- which(vals$grid=="b")
@@ -490,7 +490,7 @@ server <- function(input, output, session) {
   
 ############remove unanswered qns if any and penalty#################
   observe({
-    invalidateLater(2200)
+    invalidateLater(3000)
     isolate({
       if (length(which(vals$grid=="c")) != 0){
       cell <- which(vals$grid=="c")
