@@ -148,7 +148,7 @@ publishScore <- function(playername,score){
 getLeaderBoard <- function(gamevariantid){
   conn <- getAWSConnection()
   #First, we need to know whether highscorewins for this game variant
-  query <- paste0("SELECT playername, playerscore FROM LeaderBoardScore ORDER BY playerscore")
+  query <- paste0("SELECT playername, playerscore FROM LeaderBoardScore ORDER BY playerscore DESC")
   result <- dbGetQuery(conn,query)
   dbDisconnect(conn)
   result
