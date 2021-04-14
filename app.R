@@ -140,8 +140,8 @@ Answering the question incorrectly will incurs a penalty of 20 points. You need 
                   tags$br(),
                   actionButton("start", "START"),
                   p("ESD Game Map by NTYD"),
-                  textOutput('timeleft'),
-                  textOutput('score')
+                  h3(textOutput('timeleft')),
+                  h3(textOutput('score'))
                 )
               )
       ),
