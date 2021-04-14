@@ -331,12 +331,12 @@ server <- function(input, output, session) {
   
   ###############function to output plates icons on unoccupied spaces#############
   observe({
-    invalidateLater(1200, session)
+    invalidateLater(700, session)
     isolate({
       if(active()){
         #add the name of file to a reactive value to access inside/outside of this observe event
         img <- "dishimage.png"
-        if (length(which(vals$grid==0)) > 0){
+        if (length(which(vals$grid==0)) != 0){
           cell <- sample(which(vals$grid==0),1)
           print(vals$grid)
           
@@ -395,7 +395,7 @@ server <- function(input, output, session) {
   ######function to add trivia question######
   observeEvent(timer(),{
     isolate({
-    if (timer() %in% c(45,30,15)){
+    if ((timer() %in% c(45,30,15)) & (length(which(vals$grid==0)) != 0)) {
     cell <- sample(which(vals$grid==0),1) 
     if (cell == 1){
       vals$grid[cell] <- "b"
@@ -490,7 +490,7 @@ server <- function(input, output, session) {
   
 ############remove unanswered qns if any and penalty#################
   observe({
-    invalidateLater(3000)
+    invalidateLater(4000)
     isolate({
       if (length(which(vals$grid=="c")) != 0){
       cell <- which(vals$grid=="c")
