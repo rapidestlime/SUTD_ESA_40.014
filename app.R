@@ -699,7 +699,7 @@ server <- function(input, output, session) {
   #})
   
   output$leaderboard <- renderTable({numclicks <- input$publishscore +input$playgame #to force a refresh whenever one of these buttons is clicked
-  leaderboard <- getLeaderBoard(1)
+  leaderboard <- getLeaderBoard()
   leaderboard}
   )
   
