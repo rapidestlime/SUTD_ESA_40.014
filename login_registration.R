@@ -126,7 +126,7 @@ registerPlayer <- function(password){
 
 publishScore <- function(playername,score){
   conn <- getAWSConnection()
-  if (playername == NULL){
+  if (is.null(playername) == TRUE){
     playername <- "Anonymous"} #to catch error no one is logged in for the game
   querytemplate <- "INSERT INTO LeaderBoardScore (playername,playerscore) VALUES (?id1,?id2)"
   query <- sqlInterpolate(conn, querytemplate,id1=playername,id2=score)
