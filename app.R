@@ -148,7 +148,7 @@ Answering the question incorrectly will incurs a penalty of 20 points. You need 
       tabItem(tabName = "scores",
               h2("See where you stand!"),
               fluidRow(box(title = 'ScoreBoard', width = 12,
-                           uiOutput("moretabcontrols")))
+                           uiOutput("leaderboard")))
               
               
       )
@@ -687,18 +687,8 @@ server <- function(input, output, session) {
   ######################################################
   
   ###### publish score ####
-  
-  output$moretabcontrols <- renderUI({
-    req(vals$score,vals$playername) # if vals$score is NULL, the controls will not be visible
-    tagList(
-      tableOutput("leaderboard")
-    )
-  })
-  #observeEvent(input$publishscore,{
-  #  publishScore(vals$playername,vals$score)
-  #})
-  
-  output$leaderboard <- renderTable({numclicks <- input$publishscore +input$playgame #to force a refresh whenever one of these buttons is clicked
+ 
+  output$leaderboard <- renderTable({
   leaderboard <- getLeaderBoard()
   leaderboard}
   )
